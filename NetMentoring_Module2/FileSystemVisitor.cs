@@ -16,7 +16,6 @@ namespace NetMentoring_Module2
         public event ProcessStateHandler DirectoryFinded;
         public event ProcessStateHandler FilteredFileFinded;
         public event ProcessStateHandler FilteredDirectoryFinded;
-        //private readonly List<string> Result;
         private readonly string _directoryName;
         private readonly Func<string, bool> _filterPredicate;
         private int _count;
@@ -47,79 +46,59 @@ namespace NetMentoring_Module2
                 Result.Clear();
                 _count = 0;
             }
-            if (_filterPredicate != null)
-            {
-                GetFiles(_directoryName, _filterPredicate);
-            }
-            else
-            {
-                GetFiles(_directoryName);
-            }
+            GetFiles(_directoryName);
         }
 
         #region private methods
-        private void GetFiles(string directoryName, Func<string,bool> filterPredicate)
-        {
-            if (Directory.Exists(directoryName))
-            {
-
-                string[] subDirectories = Directory.GetDirectories(directoryName);
-
-                if (subDirectories.Length <= 0 || subDirectories == null)
-                    return;
-                foreach (string subDirectory in subDirectories)
-                {
-                    if (filterPredicate(subDirectory))
-                    {
-                        Result.Add(subDirectory);
-                        _count++;
-                        FilteredDirectoryFinded?.Invoke(this, new ProcessEventArgs("[FilteredDirectoryFinded]", Count, subDirectory));
-                    }
-                    string[] files = Directory.GetFiles(subDirectory);
-                    if (files.Length > 0 && files != null)
-                    {
-                        foreach (string file in files)
-                        {
-                            if (filterPredicate(file))
-                            {
-                                Result.Add(file);
-                                _count++;
-                                FilteredFileFinded?.Invoke(this, new ProcessEventArgs("[FilteredFileFinded]", Count, file));
-                            }
-                        }
-                    }
-                    GetFiles(subDirectory,filterPredicate);
-                }
-            }
-        }
 
         private void GetFiles(string directoryName)
         {
-            if (Directory.Exists(directoryName))
-            {
-                
-                string[] subDirectories = Directory.GetDirectories(directoryName);
+            if (!Directory.Exists(directoryName)) return;
+            var subDirectories = Directory.GetDirectories(directoryName);
               
-                if (subDirectories.Length <= 0 || subDirectories == null)
-                    return;
-                foreach (string subDirectory in subDirectories)
+            if (subDirectories.Length <= 0)
+                return;
+            foreach (var subDirectory in subDirectories)
+            {
+                if (_filterPredicate != null)
                 {
-                    
+                    if (!_filterPredicate(subDirectory)) continue;
+                        Result.Add(subDirectory);
+                        _count++;
+                        FilteredDirectoryFinded?.Invoke(this, new ProcessEventArgs("[FilteredDirectoryFinded]", Count, subDirectory));
+                }
+                else
+                {
                     Result.Add(subDirectory);
                     _count++;
                     DirectoryFinded?.Invoke(this, new ProcessEventArgs("[DirectoryFinded] : ", Count, subDirectory));
-                    string[] files = Directory.GetFiles(subDirectory);
-                    if (files.Length > 0 && files != null)
+                }
+
+                var files = Directory.GetFiles(subDirectory);                   
+                     
+                if (files.Length > 0)
+                {
+                    foreach (var file in files)
                     {
-                        foreach (string file in files)
+                        if (_filterPredicate != null)
+                        {
+                            if (!_filterPredicate(file)) continue;
+                            Result.Add(subDirectory);
+                            _count++;
+                            DirectoryFinded?.Invoke(this,
+                                new ProcessEventArgs("[DirectoryFinded] : ", Count, subDirectory));
+                        }
+                        else
                         {
                             Result.Add(file);
                             _count++;
-                            FileFinded?.Invoke(this,new ProcessEventArgs("[FileFinded] : ", Count, file));
+                            FileFinded?.Invoke(this, new ProcessEventArgs("[FileFinded] : ", Count, file));
                         }
+
+
                     }
-                    GetFiles(subDirectory);
                 }
+                GetFiles(subDirectory);
             }
         }
         #endregion

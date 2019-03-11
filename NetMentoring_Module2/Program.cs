@@ -14,7 +14,7 @@ namespace NetMentoring_Module2
         {
             Func<string, bool> sortingDelegate = (directory) =>
             {
-                if (directory.Length > 45)
+                if (directory.Length > 40)
                     return false;
                 else
                     return true;
@@ -24,7 +24,7 @@ namespace NetMentoring_Module2
                    
             //FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog", sortingDelegate);
 
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog");
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", sortingDelegate);
             fileSystemVisitor.Start += Show_Message;
             fileSystemVisitor.Finish += Show_Message;
             fileSystemVisitor.FileFinded += Show_Message;
