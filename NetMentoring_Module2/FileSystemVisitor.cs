@@ -18,9 +18,10 @@ namespace NetMentoring_Module2
         public event ProcessStateHandler FilteredDirectoryFinded;
         private readonly string _directoryName;
         private readonly Func<string, bool> _filterPredicate;
+        private bool _isCancelled;
         private int _count;
 
-        public int Count { get { return _count; } }
+        public int Count => _count;
         public List<string> Result { get; }
 
 
@@ -32,7 +33,7 @@ namespace NetMentoring_Module2
             _directoryName = directoryName;
         }
 
-        public FileSystemVisitor(string directoryName)
+        public FileSystemVisitor(string directoryName): this(directoryName, null)
         {
             Result = new List<string>();
             _directoryName = directoryName;
@@ -46,7 +47,9 @@ namespace NetMentoring_Module2
                 Result.Clear();
                 _count = 0;
             }
+            Start?.Invoke(this, new ProcessEventArgs("The Program has started", Count, null, false, false));
             GetFiles(_directoryName);
+            Start?.Invoke(this, new ProcessEventArgs("The Program has finished", Count, null, false, false));
         }
 
         #region private methods
@@ -62,16 +65,22 @@ namespace NetMentoring_Module2
             {
                 if (_filterPredicate != null)
                 {
+                    if (_isCancelled) return;
                     if (!_filterPredicate(subDirectory)) continue;
-                        Result.Add(subDirectory);
-                        _count++;
-                        FilteredDirectoryFinded?.Invoke(this, new ProcessEventArgs("[FilteredDirectoryFinded]", Count, subDirectory));
+                    var processEventArgs = new ProcessEventArgs("[FilteredDirectoryFinded]", _count, subDirectory, false, false);
+                    _count++;
+                    FilteredDirectoryFinded?.Invoke(this, processEventArgs);
+                    if(!processEventArgs.IsExcluded) Result.Add(subDirectory);
+                   
                 }
                 else
                 {
-                    Result.Add(subDirectory);
+                    if (_isCancelled) return;
                     _count++;
-                    DirectoryFinded?.Invoke(this, new ProcessEventArgs("[DirectoryFinded] : ", Count, subDirectory));
+                    var processEventArgs = new ProcessEventArgs("[DirectoryFinded] : ", _count, subDirectory, false, false);   
+                    DirectoryFinded?.Invoke(this, processEventArgs);
+                    if (!processEventArgs.IsExcluded) Result.Add(subDirectory);
+                    _isCancelled = processEventArgs.IsCancelled;
                 }
 
                 var files = Directory.GetFiles(subDirectory);                   
@@ -80,22 +89,25 @@ namespace NetMentoring_Module2
                 {
                     foreach (var file in files)
                     {
+                        if (_isCancelled) return;
                         if (_filterPredicate != null)
                         {
                             if (!_filterPredicate(file)) continue;
-                            Result.Add(subDirectory);
                             _count++;
-                            DirectoryFinded?.Invoke(this,
-                                new ProcessEventArgs("[DirectoryFinded] : ", Count, subDirectory));
+                            var processEventArgs = new ProcessEventArgs("[DirectoryFinded] : ", _count, subDirectory, false, false);
+                            DirectoryFinded?.Invoke(this, processEventArgs);
+                            if (!processEventArgs.IsExcluded) Result.Add(subDirectory);
+                            _isCancelled = processEventArgs.IsCancelled;
                         }
                         else
                         {
-                            Result.Add(file);
+                            if (_isCancelled) return;
                             _count++;
-                            FileFinded?.Invoke(this, new ProcessEventArgs("[FileFinded] : ", Count, file));
+                            var processEventArgs = new ProcessEventArgs("[FileFinded] : ", _count, file, false, false);
+                            FileFinded?.Invoke(this, processEventArgs);
+                            if (!processEventArgs.IsExcluded) Result.Add(file);
+                            _isCancelled = processEventArgs.IsCancelled;
                         }
-
-
                     }
                 }
                 GetFiles(subDirectory);

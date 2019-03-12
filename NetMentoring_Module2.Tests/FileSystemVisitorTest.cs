@@ -10,7 +10,7 @@ namespace NetMentoring_Module2.Tests
         [TestMethod]
         public void FileSystemVisitor_GetFilesMethod_ReturnsCountPropertyAboveZero()
         {
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog");
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog");
             fileSystemVisitor.GetFiles();
             Assert.IsTrue(fileSystemVisitor.Count > 0);
         }
@@ -25,7 +25,7 @@ namespace NetMentoring_Module2.Tests
                 else
                     return true;
             };
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog",sortingDelegate);
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog",sortingDelegate);
             fileSystemVisitor.GetFiles();
             Assert.IsTrue(fileSystemVisitor.Count > 0);
         }
@@ -33,7 +33,7 @@ namespace NetMentoring_Module2.Tests
         [TestMethod]
         public void FileSystemVisitor_GetFilesMethod_ReturnsResultPropertyLengthAboveZero()
         {
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog");
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog");
             fileSystemVisitor.GetFiles();
             Assert.IsTrue(fileSystemVisitor.Result.Count > 0);
         }
@@ -43,7 +43,7 @@ namespace NetMentoring_Module2.Tests
         {
             int firstCall = 0;
             int secontCall = 0;
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog");
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog");
             fileSystemVisitor.GetFiles();
             firstCall = fileSystemVisitor.Count;
             fileSystemVisitor.GetFiles();
@@ -55,7 +55,7 @@ namespace NetMentoring_Module2.Tests
         {
             int firstCall = 0;
             int secontCall = 0;
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog");
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog");
             fileSystemVisitor.GetFiles();
             firstCall = fileSystemVisitor.Result.Count;
             fileSystemVisitor.GetFiles();
@@ -68,7 +68,7 @@ namespace NetMentoring_Module2.Tests
             var mock = new Mock<Func<string,bool>>();
             mock.Setup(del => del(It.IsAny<string>())).Returns(true);
 
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog", mock.Object);
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", mock.Object);
 
             fileSystemVisitor.GetFiles();
 
@@ -81,7 +81,7 @@ namespace NetMentoring_Module2.Tests
             var mock = new Mock<Func<string, bool>>();
             mock.Setup(del => del(It.IsAny<string>())).Returns(false);
 
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog", mock.Object);
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", mock.Object);
 
             fileSystemVisitor.GetFiles();
 
@@ -94,7 +94,7 @@ namespace NetMentoring_Module2.Tests
             var mock = new Mock<Func<string, bool>>();
             mock.Setup(del => del(It.IsAny<string>())).Returns(true);
 
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog", mock.Object);
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", mock.Object);
 
             fileSystemVisitor.GetFiles();
 

@@ -13,12 +13,18 @@ namespace NetMentoring_Module2
         public int Count { get; }
 
         public string Directory { get; }
- 
-        public ProcessEventArgs(string message, int count, string directory)
+
+        public bool IsCancelled { get; set; }
+
+        public bool IsExcluded { get; set; }
+
+        public ProcessEventArgs(string message, int count, string directory, bool isExcluded, bool isCancelled)
         {
             Directory = directory;
             Message = message;
             Count = count;
+            IsCancelled = isCancelled;
+            IsExcluded = isExcluded;
         }
     }
 }

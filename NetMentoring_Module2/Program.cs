@@ -12,19 +12,19 @@ namespace NetMentoring_Module2
     {
         static void Main(string[] args)
         {
-            Func<string, bool> sortingDelegate = (directory) =>
-            {
-                if (directory.Length > 40)
-                    return false;
-                else
-                    return true;
-            };
+            //Func<string, bool> sortingDelegate = (directory) =>
+            //{
+            //    if (directory.Length > 40)
+            //        return false;
+            //    else
+            //        return true;
+            //};
 
             //To test with Func
                    
-            //FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog", sortingDelegate);
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog");
 
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", sortingDelegate);
+            //FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", sortingDelegate);
             fileSystemVisitor.Start += Show_Message;
             fileSystemVisitor.Finish += Show_Message;
             fileSystemVisitor.FileFinded += Show_Message;
@@ -36,19 +36,18 @@ namespace NetMentoring_Module2
             fileSystemVisitor.GetFiles();
             //Here you can try to itrerate the object
 
-            //foreach (var file in fileSystemVisitor)
-            //{
-            //    Console.WriteLine(file);
-            //}
+            foreach (var file in fileSystemVisitor)
+            {
+                Console.WriteLine(file);
+            }
 
             Console.ReadLine();
 
         }
         readonly static List<string> directoriesToExclude = new List<string>()
         {
-            @"C:\TestCatalog\Catalog_1\Catalog_1_3\Catalog_1_3_3",
-            @"C:\TestCatalog\Catalog_1\Catalog_1_3\Catalog_1_3_4",
-            @"C:\TestCatalog\Catalog_2",
+            @"D:\TestCatalog\TestCatalog_1\TestCatalog_1_2",
+            @"D:\TestCatalog\TestCatalog_1\TestCatalog_1_3",
         };
 
         static void Show_Message(object sender, ProcessEventArgs e)
@@ -58,14 +57,14 @@ namespace NetMentoring_Module2
             //foreach (string directory in directoriesToExclude)
             //{
             //    if (e.Directory.Contains(directory))
-            //        return;
+            //        e.IsExcluded = true;
             //}
 
             //if you want to return after some messages
 
-            //if (e.Count >= 7)
+            //if (e.Count >= 5)
             //{
-            //    return;
+            //    e.IsCancelled = true;
             //}
             Console.WriteLine(e.Message + e.Directory);
         }
