@@ -19,6 +19,8 @@ namespace NetMentoring_Module2
 
         #endregion
 
+        #region events
+
         public event ProcessStateHandler Start;
         public event ProcessStateHandler Finish;
         public event ProcessStateHandler FileFinded;
@@ -26,6 +28,7 @@ namespace NetMentoring_Module2
         public event ProcessStateHandler FilteredFileFinded;
         public event ProcessStateHandler FilteredDirectoryFinded;
 
+        #endregion
 
 
         #region properties
