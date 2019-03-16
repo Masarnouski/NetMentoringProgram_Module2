@@ -10,22 +10,35 @@ namespace NetMentoring_Module2
 
     public class FileSystemVisitor : IEnumerable
     {
+        #region fields
+
+        private readonly string _directoryName;
+        private readonly Func<string, bool> _filterPredicate;
+        private bool _isCancelled;
+        private int _count;
+
+        #endregion
+
         public event ProcessStateHandler Start;
         public event ProcessStateHandler Finish;
         public event ProcessStateHandler FileFinded;
         public event ProcessStateHandler DirectoryFinded;
         public event ProcessStateHandler FilteredFileFinded;
         public event ProcessStateHandler FilteredDirectoryFinded;
-        private readonly string _directoryName;
-        private readonly Func<string, bool> _filterPredicate;
-        private bool _isCancelled;
-        private int _count;
 
-        public int Count => _count;
+
+
+        #region properties
+
         public List<string> Result { get; }
+        public int Count => _count;
+
+        #endregion
+
 
 
         #region constructors
+
         public FileSystemVisitor(string directoryName, Func<string, bool> filterPredicate)
         {
             Result = new List<string>();
@@ -36,8 +49,8 @@ namespace NetMentoring_Module2
         public FileSystemVisitor(string directoryName): this(directoryName, null)
         {
             Result = new List<string>();
-            _directoryName = directoryName;
         }
+
         #endregion
 
         public void GetFiles()
@@ -49,7 +62,7 @@ namespace NetMentoring_Module2
             }
             Start?.Invoke(this, new ProcessEventArgs("The Program has started", Count, null, false, false));
             GetFiles(_directoryName);
-            Start?.Invoke(this, new ProcessEventArgs("The Program has finished", Count, null, false, false));
+            Finish?.Invoke(this, new ProcessEventArgs("The Program has finished", Count, null, false, false));
         }
 
         #region private methods
@@ -71,7 +84,7 @@ namespace NetMentoring_Module2
                     _count++;
                     FilteredDirectoryFinded?.Invoke(this, processEventArgs);
                     if(!processEventArgs.IsExcluded) Result.Add(subDirectory);
-                   
+                    _isCancelled = processEventArgs.IsCancelled;
                 }
                 else
                 {

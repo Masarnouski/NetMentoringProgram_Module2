@@ -22,7 +22,7 @@ namespace NetMentoring_Module2
 
             //To test with Func
                    
-            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog");
+            FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"C:\TestCatalog");
 
             //FileSystemVisitor fileSystemVisitor = new FileSystemVisitor(@"D:\TestCatalog", sortingDelegate);
             fileSystemVisitor.Start += Show_Message;
